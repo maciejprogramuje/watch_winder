@@ -44,10 +44,9 @@ enum Modes { CONTINOUS,
              FULL };
 
 int revolution;
-int revolutions[] = { 100,
+int revolutions[] = { 40,
                       750,
                       1500,
-                      2000,
                       2500 };
 
 int direction;
