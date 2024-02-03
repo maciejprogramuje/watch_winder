@@ -75,6 +75,7 @@ void setup() {
   waitForStepAccept = waitForStepAcceptTemplate;
   disp.setSegments(dispHelo, 4, 0);
 
+  menuStep = HELLO;
   resetVariables();
 
   pauseInContModeTemplate = (3600 - (18 * revolutions[0])) / loopDelaySecondsTemplate;
@@ -131,8 +132,8 @@ void onPushButton() {
 
   switch (menuStep) {
     case HELLO:
+      resetVariables();
       menuStep = MODE;
-      stepButton = 0;
       break;
     case MODE:
       if (stepButton > FULL) stepButton = 0;
@@ -147,9 +148,9 @@ void onPushButton() {
       direction = stepButton;
       break;
     case TENSION:
-      resetVariables();
+      menuStep = HELLO;
       disp.setSegments(dispDo, 4, 0);
-      loop();
+      //loop();
       break;
   }
 
@@ -188,6 +189,7 @@ void doRevolution() {
         }
         break;
       case FULL:
+        menuStep = HELLO;
         resetVariables();
         disp.setSegments(dispDone, 4, 0);
         break;
@@ -265,7 +267,6 @@ void chooseDirection() {
 
 void resetVariables() {
   stepButton = 0;
-  menuStep = HELLO;
   mode = CONTINOUS;
   revolution = revolutions[0];
   direction = BOTH;
