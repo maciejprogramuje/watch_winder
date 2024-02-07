@@ -61,6 +61,7 @@ int waitForStepAccept;
 int loopDelaySecondsTemplate = 1;
 int pauseInContModeTemplate;
 int pauseInContMode;
+int continousModeNumer;
 
 
 // **************************************************************************
@@ -68,7 +69,8 @@ void setup() {
   //Serial.begin(9600);
   stepper.setSpeed(10);
   disp.clear();
-  disp.setBrightness(0x0A);
+  //disp.setBrightness(0x0A);
+  disp.setBrightness(1);
   pinMode(BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON), onPushButton, FALLING);
 
@@ -85,34 +87,32 @@ void setup() {
 void loop() {
   delay(loopDelaySecondsTemplate * 1000);
 
-  if (menuStep != HELLO) {
-    if (waitForStepAccept > 0) {
-      waitForStepAccept--;
-    } else {
-      waitForStepAccept = waitForStepAcceptTemplate;
-      stepButton = 0;
+  if (waitForStepAccept > 0) {
+    waitForStepAccept--;
+  } else {
+    waitForStepAccept = waitForStepAcceptTemplate;
+    stepButton = 0;
 
-      if (menuStep == MODE && mode == CONTINOUS) {
-        menuStep = DIRECTION;
-      } else if (menuStep < TENSION) {
-        menuStep++;
-      }
+    if (menuStep == MODE && mode == CONTINOUS) {
+      menuStep = DIRECTION;
+    } else if (menuStep < TENSION) {
+      menuStep++;
     }
+  }
 
-    switch (menuStep) {
-      case MODE:
-        chooseMode();
-        break;
-      case REVOLUTIONS_NUMBER:
-        chooseRevolutionsNumber();
-        break;
-      case DIRECTION:
-        chooseDirection();
-        break;
-      case TENSION:
-        doRevolution();
-        break;
-    }
+  switch (menuStep) {
+    case MODE:
+      chooseMode();
+      break;
+    case REVOLUTIONS_NUMBER:
+      chooseRevolutionsNumber();
+      break;
+    case DIRECTION:
+      chooseDirection();
+      break;
+    case TENSION:
+      doRevolution();
+      break;
   }
 
   //Serial.println("menuStep=" + String(menuStep) + ", waitForStepAccept=" + waitForStepAccept + ", mode=" + mode + ", revolution=" + revolution + ", direction=" + direction);
@@ -176,11 +176,19 @@ void doRevolution() {
   } else {
     switch (mode) {
       case CONTINOUS:
+        if (pauseInContMode == pauseInContModeTemplate) continousModeNumer++;
+        if (continousModeNumer > 99) continousModeNumer = 0;
+
         if (pauseInContMode > 0) {
-          int minutes = pauseInContMode / 60;
-          int seconds = pauseInContMode % 60;
-          disp.showNumberDecEx(minutes, 64, true, 2, 0);
-          disp.showNumberDecEx(seconds, 64, true, 2, 2);
+          if (pauseInContMode % 30 == 0) {
+            displayModeChar();
+            disp.showNumberDec(continousModeNumer, false, 2, 2);
+          } else {
+            int minutes = pauseInContMode / 60;
+            int seconds = pauseInContMode % 60;
+            disp.showNumberDecEx(minutes, 64, true, 2, 0);
+            disp.showNumberDecEx(seconds, 64, true, 2, 2);
+          }
 
           pauseInContMode--;
         } else {
@@ -270,4 +278,5 @@ void resetVariables() {
   mode = CONTINOUS;
   revolution = revolutions[0];
   direction = BOTH;
+  continousModeNumer = 0;
 }
