@@ -4,10 +4,10 @@
 #define BUTTON 2    //
 #define DISP_CLK 6  //
 #define DISP_DIO 5  //
-#define stepperIn1 8
-#define stepperIn2 9
-#define stepperIn3 10
-#define stepperIn4 11
+#define stepperIn1 9
+#define stepperIn2 10
+#define stepperIn3 11
+#define stepperIn4 3
 // **************************************************************************
 // ******* VARIABLE DEFINITIONS *********************************************
 // **************************************************************************
@@ -67,6 +67,11 @@ int continousModeNumer;
 // **************************************************************************
 void setup() {
   //Serial.begin(9600);
+
+  //wyciszenie silnika krokowego - magia od Adama Śmiałka
+  TCCR1B = TCCR1B & B11111000 | B00000001;  // zmiana częstotliwości PWM na 31372.55 Hz (dotyczy portów 9 & 10)
+  TCCR2B = TCCR2B & B11111000 | B00000001;  // zmiana częstotliwości PWM na 31372.55 Hz (dotyczy portów 3 & 11)
+
   stepper.setSpeed(10);
   disp.clear();
   //disp.setBrightness(0x0A);
