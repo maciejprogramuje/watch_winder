@@ -32,28 +32,27 @@ uint8_t dispHelo[] = { SEG_F | SEG_E | SEG_G | SEG_B | SEG_C, SEG_A | SEG_F | SE
 Stepper stepper(STEPS, stepperIn1, stepperIn3, stepperIn2, stepperIn4);
 TM1637Display disp(DISP_CLK, DISP_DIO);
 
-int menuStep;
 enum MenuSteps { HELLO,
                  MODE,
                  REVOLUTIONS_NUMBER,
                  DIRECTION,
                  TENSION };
+enum MenuSteps menuStep;
 
-int mode;
 enum Modes { CONTINOUS,
              FULL };
+enum Modes mode;
 
-int revolution;
 int revolutions[] = { 40,
                       750,
                       1500,
                       2500 };
+int revolution;
 
-int direction;
-int revDirection;
 enum Directions { BOTH,
                   CW,
                   CCW };
+enum Directions direction;
 
 int stepButton;
 int waitForStepAcceptTemplate = 5;
@@ -61,7 +60,7 @@ int waitForStepAccept;
 int loopDelaySecondsTemplate = 1;
 int pauseInContModeTemplate;
 int pauseInContMode;
-int continousModeNumer;
+int continousModeCounter;
 
 
 // **************************************************************************
@@ -101,7 +100,7 @@ void loop() {
     if (menuStep == MODE && mode == CONTINOUS) {
       menuStep = DIRECTION;
     } else if (menuStep < TENSION) {
-      menuStep++;
+      menuStep = menuStep + 1;
     }
   }
 
@@ -181,13 +180,13 @@ void doRevolution() {
   } else {
     switch (mode) {
       case CONTINOUS:
-        if (pauseInContMode == pauseInContModeTemplate) continousModeNumer++;
-        if (continousModeNumer > 99) continousModeNumer = 0;
+        if (pauseInContMode == pauseInContModeTemplate) continousModeCounter++;
+        if (continousModeCounter > 99) continousModeCounter = 0;
 
         if (pauseInContMode > 0) {
           if (pauseInContMode % 30 == 0) {
             displayModeChar();
-            disp.showNumberDec(continousModeNumer, false, 2, 2);
+            disp.showNumberDec(continousModeCounter, false, 2, 2);
           } else {
             int minutes = pauseInContMode / 60;
             int seconds = pauseInContMode % 60;
@@ -283,5 +282,5 @@ void resetVariables() {
   mode = CONTINOUS;
   revolution = revolutions[0];
   direction = BOTH;
-  continousModeNumer = 0;
+  continousModeCounter = 0;
 }
