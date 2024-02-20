@@ -181,12 +181,12 @@ void doRevolution() {
     switch (mode) {
       case CONTINOUS:
         if (pauseInContMode == pauseInContModeTemplate) continousModeCounter++;
-        if (continousModeCounter > 99) continousModeCounter = 0;
+        if (continousModeCounter > 999) continousModeCounter = 0;
 
         if (pauseInContMode > 0) {
           if (pauseInContMode % 30 == 0) {
             displayModeChar();
-            disp.showNumberDec(continousModeCounter, false, 2, 2);
+            disp.showNumberDec(continousModeCounter, false, 3, 1);
           } else {
             int minutes = pauseInContMode / 60;
             int seconds = pauseInContMode % 60;
