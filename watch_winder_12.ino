@@ -11,7 +11,8 @@
 // **************************************************************************
 // ******* VARIABLE DEFINITIONS *********************************************
 // **************************************************************************
-float revBig = 3;  // revolutions factor for one case revolution - 3 default
+float revBig = 1.93;  // revolutions factor for one case revolution - 2 default
+int oneRevolutionTimeSeconds = 12;
 // **************************************************************************
 // ******** DISPLAY DEFINITIONS *********************************************
 // **************************************************************************
@@ -84,7 +85,7 @@ void setup() {
   menuStep = HELLO;
   resetVariables();
 
-  pauseInContModeTemplate = (3600 - (18 * revolutions[0])) / loopDelaySecondsTemplate;
+  pauseInContModeTemplate = (3600 - (oneRevolutionTimeSeconds * revolutions[0])) / loopDelaySecondsTemplate;
   pauseInContMode = pauseInContModeTemplate;
 }
 // **************************************************************************
