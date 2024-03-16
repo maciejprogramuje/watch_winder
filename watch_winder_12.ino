@@ -11,7 +11,7 @@
 // **************************************************************************
 // ******* VARIABLE DEFINITIONS *********************************************
 // **************************************************************************
-float revBig = 1.93;  // revolutions factor for one case revolution - 2 default
+float revBig = 1.93;  // revolutions factor for one case revolution - 1.93 default
 int oneRevolutionTimeSeconds = 12;
 // **************************************************************************
 // ******** DISPLAY DEFINITIONS *********************************************
@@ -31,6 +31,8 @@ uint8_t dispBothSides[] = { SEG_G | SEG_B | SEG_C, SEG_G | SEG_B | SEG_C, SEG_F 
 uint8_t dispHelo[] = { SEG_F | SEG_E | SEG_G | SEG_B | SEG_C, SEG_A | SEG_F | SEG_G | SEG_E | SEG_D, SEG_F | SEG_E | SEG_D, SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F };  // HELO
 // **************************************************************************
 Stepper stepper(STEPS, stepperIn1, stepperIn3, stepperIn2, stepperIn4);
+const byte relayStepperVcc = 7;
+
 TM1637Display disp(DISP_CLK, DISP_DIO);
 
 enum MenuSteps { HELLO,
@@ -56,7 +58,7 @@ enum Directions { BOTH,
 enum Directions direction;
 
 int stepButton;
-int waitForStepAcceptTemplate = 5;
+int waitForStepAcceptTemplate = 5;  // default 5
 int waitForStepAccept;
 int loopDelaySecondsTemplate = 1;
 int pauseInContModeTemplate;
@@ -73,8 +75,11 @@ void setup() {
   TCCR2B = TCCR2B & B11111000 | B00000001;  // zmiana częstotliwości PWM na 31372.55 Hz (dotyczy portów 3 & 11)
 
   stepper.setSpeed(10);
+  pinMode(relayStepperVcc, OUTPUT);
+
+  relaysOn(false);
+
   disp.clear();
-  //disp.setBrightness(0x0A);
   disp.setBrightness(1);
   pinMode(BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON), onPushButton, FALLING);
@@ -164,6 +169,8 @@ void onPushButton() {
 // **************************************************************************
 void doRevolution() {
   if (revolution > 0) {
+    relaysOn(true);
+
     if (revolution % 2 == 1) {
       displayModeChar();
       displayDirectionSymbol();
@@ -179,6 +186,8 @@ void doRevolution() {
       revolution--;
     }
   } else {
+    relaysOn(false);
+
     switch (mode) {
       case CONTINOUS:
         if (pauseInContMode == pauseInContModeTemplate) continousModeCounter++;
@@ -284,4 +293,12 @@ void resetVariables() {
   revolution = revolutions[0];
   direction = BOTH;
   continousModeCounter = 0;
+}
+
+void relaysOn(bool state) {
+  if (state) {
+    digitalWrite(relayStepperVcc, HIGH);
+  } else {
+    digitalWrite(relayStepperVcc, LOW);
+  }
 }
