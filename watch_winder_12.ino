@@ -297,8 +297,8 @@ void resetVariables() {
 
 void relaysOn(bool state) {
   if (state) {
-    digitalWrite(relayStepperVcc, HIGH);
-  } else {
     digitalWrite(relayStepperVcc, LOW);
+  } else {
+    digitalWrite(relayStepperVcc, HIGH);
   }
 }
